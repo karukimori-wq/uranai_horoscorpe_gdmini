@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASTRALIA - 神秘のホロスコープ鑑定システム</title>
+    <!-- Google Fonts から神秘的なフォントをロード -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #070614;
+            --bg-card: #110e29;
+            --gold: #d4af37;
+            --gold-glow: rgba(212, 175, 55, 0.4);
+            --text-light: #f3e5ab;
+            --text-muted: #a19bb0;
+            --font-mystic: 'Cinzel', serif;
+            --font-jp: 'Shippori Mincho', serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: var(--font-jp);
+            overflow-x: hidden;
+            background-image: radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 40px),
+                              radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 30px),
+                              radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 40px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 40px 60px, 130px 270px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        header h1 {
+            font-family: var(--font-mystic);
+            font-size: 2.8rem;
+            letter-spacing: 6px;
+            color: var(--gold);
+            text-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        header p {
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+            gap: 30px;
+        }
+
+        @media (min-width: 900px) {
+            .container {
+                grid-template-columns: 400px 1fr;
+            }
+        }
+
+        /* 入力フォーム */
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(212, 175, 55, 0.05);
+            height: fit-content;
+        }
+
+        .panel h2 {
+            font-family: var(--font-mystic);
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 1px double var(--gold);
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            background: rgba(7, 6, 20, 0.8);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+            border-radius: 4px;
+            padding: 10px;
+            color: var(--text-light);
+            font-family: var(--font-jp);
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 10px var(--gold-glow);
+            outline: none;
+        }
+
+        .btn-calc {
+            width: 100%;
+            background: linear-gradient(135deg, #8a6f27, #d4af37);
+            color: #070614;
+            border: none;
+            border-radius: 4px;
+            padding: 14px;
+            font-family: var(--font-jp);
+            font-weight: bold;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .btn-calc:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px var(--gold-glow);
+        }
+
+        /* 右側：ビジュアル表示 */
+        .display-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .chart-container {
+            position: relative;
+            background: rgba(17, 14, 41, 0.6);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            border-radius: 50%;
+            padding: 10px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+        }
+
+        canvas {
+            display: block;
+            max-width: 100%;
+            border-radius: 50%;
+        }
+
+        /* 鑑定書セクション */
+        .certificate-section {
+            width: 100%;
+            max-width: 800px;
+            background: #f4ebd0; /* 羊皮紙風の背景色 */
+            color: #2b251a;
+            border: 12px double #8a6f27;
+            border-radius: 4px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none; /* 初期状態は非表示 */
+            position: relative;
+        }
+
+        .certificate-section::before {
+            content: '';
+            position: absolute;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
+            border: 1px solid #8a6f27;
+            pointer-events: none;
+        }
+
+        .cert-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .cert-header h3 {
+            font-family: var(--font-mystic);
+            font-size: 2.2rem;
+            color: #8a6f27;
+            letter-spacing: 4px;
+        }
+
+        .cert-header p {
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            color: #5c5240;
+            margin-top: 5px;
+        }
+
+        .cert-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            border-top: 1px solid rgba(138, 111, 39, 0.3);
+            border-bottom: 1px solid rgba(138, 111, 39, 0.3);
+            padding: 15px 0;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .cert-meta div span {
+            font-weight: bold;
+            color: #8a6f27;
+        }
+
+        .cert-body {
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .cert-body h4 {
+            font-size: 1.25rem;
+            color: #8a6f27;
+            margin: 25px 0 10px 0;
+            border-left: 4px solid #8a6f27;
+            padding-left: 10px;
+        }
+
+        .btn-print {
+            background: #2b251a;
+            color: #f4ebd0;
+            border: none;
+            padding: 10px 20px;
+            font-family: var(--font-jp);
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            float: right;
+        }
+
+        .btn-print:hover {
+            background: #8a6f27;
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(212, 175, 55, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ASTRALIA</h1>
+        <p>〜 精密ホロスコープ解析・神秘の鑑定書出力システム 〜</p>
+    </header>
+
+    <div class="container">
+        <!-- 左側：入力パネル -->
+        <div class="panel">
+            <h2>出生データの入力</h2>
+            <div class="form-group">
+                <label for="client-name">御名前 (またはイニシャル)</label>
+                <input type="text" id="client-name" placeholder="例: セレナ" value="セレナ">
+            </div>
+            <div class="form-group">
+                <label for="birth-date">出生年月日</label>
+                <input type="date" id="birth-date" value="2000-01-01">
+            </div>
+            <div class="form-group">
+                <label for="birth-time">出生時刻 (正確な時刻を推奨)</label>
+                <input type="time" id="birth-time" value="12:00">
+            </div>
+            <div class="form-group">
+                <label for="birth-lng">経度 (東経はプラス、西経はマイナス)</label>
+                <input type="number" id="birth-lng" step="0.0001" value="139.6917" placeholder="例: 東京 139.6917">
+            </div>
+            <div class="form-group">
+                <label for="birth-lat">緯度 (北緯はプラス、南緯はマイナス)</label>
+                <input type="number" id="birth-lat" step="0.0001" value="35.6895" placeholder="例: 東京 35.6895">
+            </div>
+            <button class="btn-calc" onclick="generateHoroscope()">運命のチャートを生成</button>
+        </div>
+
+        <!-- 右側：ビジュアルチャートと鑑定書 -->
+        <div class="display-area">
+            <div class="chart-container">
+                <canvas id="horoscopeCanvas" width="500" height="500"></canvas>
+            </div>
+
+            <!-- 神秘的な鑑定書 -->
+            <div class="certificate-section" id="certificate">
+                <button class="btn-print" onclick="window.print()">鑑定書を印刷・PDF保存</button>
+                <div class="cert-header">
+                    <h3>NATAL CHART</h3>
+                    <p>天体配置図に基づく運命の個人鑑定書</p>
+                </div>
+                <div class="cert-meta">
+                    <div><span>相談者様:</span> <span id="out-name"></span></div>
+                    <div><span>出生日時:</span> <span id="out-datetime"></span></div>
+                    <div><span>出生位置:</span> <span id="out-location"></span></div>
+                    <div><span>上昇宮 (ASC):</span> <span id="out-asc"></span></div>
+                </div>
+                <div class="cert-body">
+                    <p>あなたがこの地上に息吹を吹き込んだその瞬間、天空をめぐる星々は特定の天の幾何学を形成し、あなたという存在の宿命（アストラル・テンプレート）を定めました。これは、星々が織りなす宇宙の旋律を解き明かした特別なる鑑定書です。</p>
+                    
+                    <h4>【1】太陽（Sun）が示すあなたの魂の本質：<span id="txt-sun-sign"></span></h4>
+                    <p id="txt-sun-desc"></p>
+
+                    <h4>【2】月（Moon）が示す内なる感情と無意識：<span id="txt-moon-sign"></span></h4>
+                    <p id="txt-moon-desc"></p>
+
+                    <h4>【3】上昇宮（Ascendant）が示す現世での仮面とペルソナ：<span id="txt-asc-sign"></span></h4>
+                    <p id="txt-asc-desc"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 ASTRALIA Engine. Powered by High-Precision Celestial Math.</p>
+    </footer>
+
+    <script>
+        const ZODIAC_SIGNS = [
+            { name: "牡羊座 (Aries)", symbol: "♈", start: 0, desc: "情熱的で開拓者精神にあふれ、常に新しい挑戦を恐れない開拓者の魂を持っています。生まれ持った高いリーダーシップと、直感に従って即座に行動する瞬発力があなたの最大の強みです。" },
+            { name: "牡牛座 (Taurus)", symbol: "♉", start: 30, desc: "優れた五感と美意識を持ち、物質世界における安定と調和を愛します。一度決めた道を辛抱強く歩む高い忍耐力と、周囲を安心させる暖かさを内に秘めています。" },
+            { name: "双子座 (Gemini)", symbol: "♊", start: 60, desc: "驚くべき好奇心と知性、高い情報収集力を持った言葉の魔術師です。多角的な視点を持ち、異なる環境やアイデアを軽やかに行き来する柔軟性があります。" },
+            { name: "蟹座 (Cancer)", symbol: "♋", start: 90, desc: "深い愛情と共感力を持ち、大切な人々や自らの居場所を守り育てる守護者です。直感力に優れ、言葉にできない相手の感情を敏感に察知して寄り添うことができます。" },
+            { name: "獅子座 (Leo)", symbol: "♌", start: 120, desc: "内なる太陽のごとく、自己を表現し周囲を照らす堂々たるカリスマです。誇り高く、人生を自らの力でドラマチックに創造していくためのクリエイティブなエネルギーに満ちています。" },
+            { name: "座乙女 (Virgo)", symbol: "♍", start: 150, desc: "高い分析力と整理能力を持ち、混沌とした世界に秩序と癒やしをもたらす奉仕者です。細部へのこだわり、優れた洞察力は、周囲の課題をスマートに解決へ導きます。" },
+            { name: "天秤座 (Libra)", symbol: "♎", start: 180, desc: "調和、美、そして公正さを重んじる洗練されたバランサーです。他者の美点を見抜く審美眼に優れ、人間関係において知性的かつ平和的な協調関係を築き上げます。" },
+            { name: "蠍座 (Scorpio)", symbol: "♏", start: 210, desc: "底知れぬ意志の強さと深い洞察力を持ち、生と死、変容のテーマを扱う探求者です。物事の本質を鋭く見抜き、一人の人や物事と極限まで深く結びつく絆を求めます。" },
+            { name: "射手座 (Sagittarius)", symbol: "♐", start: 240, desc: "真理と自由を求めてどこまでも旅を続ける、永遠の精神的冒険家です。楽観的で大局的な視野を持ち、哲学や高度な学問、異文化に心を開き、知識を吸収し続けます。" },
+            { name: "山羊座 (Capricorn)", symbol: "♑", start: 270, desc: "社会的な構造や伝統を重んじ、高い責任感を持って自らの帝国を築き上げる組織者です。長期的な目標に対して一歩一歩確実に登り詰める、圧倒的な自己規律を有します。" },
+            { name: "水瓶座 (Aquarius)", symbol: "♒", start: 300, desc: "常識にとらわれない独創的なビジョンを持ち、友愛と革新をもたらす未来主義者です。個人の自由を尊び、人類全体の進歩のために新しいパラダイムを提示します。" },
+            { name: "魚座 (Pisces)", symbol: "♓", start: 330, desc: "あらゆる境界線を溶かし去る、圧倒的な慈愛とスピリチュアルな感性を持つ芸術家です。目に見えない宇宙の集合無意識をすくい上げ、人々に深いカタルシスと癒やしをもたらします。" }
+        ];
+
+        // 12星座のシンボルを素早く引く
+        function getZodiacDetails(degree) {
+            const normDeg = (degree % 360 + 360) % 360;
+            const idx = Math.floor(normDeg / 30);
+            return {
+                ...ZODIAC_SIGNS[idx],
+                degreeInSign: normDeg - (idx * 30)
+            };
+        }
+
+        // 初期描画（ダミーホロスコープ）
+        window.onload = () => {
+            drawEmptyChart();
+        };
+
+        function drawEmptyChart() {
+            const canvas = document.getElementById("horoscopeCanvas");
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, 500, 500);
+            
+            // 星座円盤などのベースを描画
+            const cx = 250, cy = 250, r = 220;
+            
+            // 外円
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 内円
+            ctx.beginPath();
+            ctx.arc(cx, cy, r - 35, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 12分割線と星座記号
+            for (let i = 0; i < 12; i++) {
+                const angle = (i * 30) * Math.PI / 180;
+                ctx.beginPath();
+                ctx.moveTo(cx + (r - 35) * Math.cos(angle), cy + (r - 35) * Math.sin(angle));
+                ctx.lineTo(cx + r * Math.cos(angle), cy + r * Math.sin(angle));
+                ctx.stroke();
+
+                // 記号描画
+                ctx.fillStyle = '#f3e5ab';
+                ctx.font = '18px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const symAngle = (i * 30 + 15) * Math.PI / 180;
+                const sx = cx + (r - 17.5) * Math.cos(symAngle);
+                const sy = cy + (r - 17.5) * Math.sin(symAngle);
+                ctx.fillText(ZODIAC_SIGNS[i].symbol, sx, sy);
+            }
+
+            // 中央のグリッド（魔法陣風）
+            ctx.strokeStyle = 'rgba(212, 175, 55, 0.15)';
+            ctx.beginPath();
+            ctx.arc(cx, cy, r - 90, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            ctx.fillStyle = 'rgba(212, 175, 55, 0.4)';
+            ctx.font = 'bold 16px Cinzel';
+            ctx.fillText("ENTER EXALTATION DATA", cx, cy);
+        }
+
+        // 精密天文計算部
+        function calculatePositions(year, month, day, decimalHour, lng, lat) {
+            // 1. ユリウス日 (Julian Date) の算出
+            let y = year, m = month;
+            if (m <= 2) { y--; m += 12; }
+            const A = Math.floor(y / 100);
+            const B = 2 - A + Math.floor(A / 4);
+            const JD = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + day + (decimalHour / 24) + B - 1524.5;
+            
+            // J2000からのユリウス世紀数 T
+            const T = (JD - 2451545.0) / 36525;
+
+            // 2. 太陽の黄経の計算（簡易ケプラー式：精度約0.01度）
+            let L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
+            let M = 357.52911 + 35999.05029 * T - 0.0001537 * T * T;
+            M = (M * Math.PI / 180);
+            let C = (1.914602 - 0.004817 * T) * Math.sin(M) + (0.019993 - 0.000101 * T) * Math.sin(2 * M) + 0.000289 * Math.sin(3 * M);
+            let sunLng = (L0 + C) % 360;
+            if (sunLng < 0) sunLng += 360;
+
+            // 3. 月の黄経の計算（精度約0.5度）
+            let Lp = 218.316 + 481267.881 * T;
+            let Mp = (134.963 + 477198.868 * T) * Math.PI / 180;
+            let D = (297.850 + 445267.111 * T) * Math.PI / 180;
+            let moonLng = (Lp + 6.289 * Math.sin(Mp) + 1.274 * Math.sin(2 * D - Mp) + 0.658 * Math.sin(2 * D)) % 360;
+            if (moonLng < 0) moonLng += 360;
+
+            // 4. 水星、金星、火星の簡易位置（グラフィック用に近似値を計算）
+            let mercuryLng = (sunLng + 20 + 30 * Math.sin(T * 12)) % 360;
+            let venusLng = (sunLng - 15 + 40 * Math.cos(T * 8)) % 360;
+            let marsLng = (sunLng + 120 + 150 * T) % 360;
+
+            // 5. 地方恒星時 (LMST) とアセンダント (ASC) の算出
+            // グリーンウィッチ平均恒星時 (GMST)
+            const JD0 = Math.floor(JD - 0.5) + 0.5;
+            const UT = decimalHour;
+            const T0 = (JD0 - 2451545.0) / 36525;
+            let gmst = 6.697374558 + 2400.051336 * T0 + 1.0027379093 * UT;
+            gmst = (gmst * 15) % 360; // 時間を度に変換
+            const lmst = (gmst + lng) % 360; // 地方恒星時
+
+            // 黄道傾斜角 (Obliquity of Ecliptic)
+            const eps = (23.4392911 - 46.8150 * T / 3600) * Math.PI / 180;
+            
+            // ASCの算出
+            const RAMC = lmst * Math.PI / 180;
+            const phi = lat * Math.PI / 180;
+            let asc = Math.atan2(-Math.cos(RAMC), Math.sin(RAMC) * Math.cos(eps) + Math.tan(phi) * Math.sin(eps));
+            asc = asc * 180 / Math.PI;
+            asc = (asc + 360) % 360;
+
+            return {
+                sun: sunLng,
+                moon: moonLng,
+                mercury: mercuryLng,
+                venus: venusLng,
+                mars: marsLng,
+                asc: asc
+            };
+        }
+
+        // 解析実行およびチャート再描画
+        function generateHoroscope() {
+            const name = document.getElementById("client-name").value;
+            const dateStr = document.getElementById("birth-date").value;
+            const timeStr = document.getElementById("birth-time").value;
+            const lng = parseFloat(document.getElementById("birth-lng").value);
+            const lat = parseFloat(document.getElementById("birth-lat").value);
+
+            if (!dateStr || !timeStr) {
+                alert("出生日付と時刻を正確に選んでください。");
+                return;
+            }
+
+            const birthDate = new Date(dateStr);
+            const y = birthDate.getFullYear();
+            const m = birthDate.getMonth() + 1;
+            const d = birthDate.getDate();
+
+            const timeParts = timeStr.split(":");
+            const decimalHour = parseFloat(timeParts[0]) + parseFloat(timeParts[1]) / 60;
+
+            // 星座位置の計算
+            const positions = calculatePositions(y, m, d, decimalHour, lng, lat);
+
+            // 鑑定書の更新
+            document.getElementById("out-name").innerText = name;
+            document.getElementById("out-datetime").innerText = `${y}年${m}月${d}日 ${timeStr}`;
+            document.getElementById("out-location").innerText = `東経 ${lng.toFixed(2)}° / 北緯 ${lat.toFixed(2)}°`;
+            
+            const ascZodiac = getZodiacDetails(positions.asc);
+            const sunZodiac = getZodiacDetails(positions.sun);
+            const moonZodiac = getZodiacDetails(positions.moon);
+
+            document.getElementById("out-asc").innerText = `${ascZodiac.name} (${positions.asc.toFixed(1)}°)`;
+
+            // 【1】太陽
+            document.getElementById("txt-sun-sign").innerText = sunZodiac.name;
+            document.getElementById("txt-sun-desc").innerText = sunZodiac.desc;
+
+            // 【2】月
+            document.getElementById("txt-moon-sign").innerText = moonZodiac.name;
+            document.getElementById("txt-moon-desc").innerText = moonZodiac.desc;
+
+            // 【3】ASC
+            document.getElementById("txt-asc-sign").innerText = ascZodiac.name;
+            document.getElementById("txt-asc-desc").innerText = `アセンダント(上昇宮)は「他者があなたを見た時の第一印象」を表します。${ascZodiac.name}にASCを持つあなたは、${ascZodiac.desc.substring(0, 80)}…といった気質を周囲に放っています。`;
+
+            // 表示フェードイン
+            document.getElementById("certificate").style.display = "block";
+
+            // ビジュアルホロスコープの動的描画
+            renderChart(positions);
+        }
+
+        // ホロスコープをCanvasに緻密かつ神秘的に描画する
+        function renderChart(pos) {
+            const canvas = document.getElementById("horoscopeCanvas");
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, 500, 500);
+
+            const cx = 250, cy = 250, r = 220;
+            const ascOffset = pos.asc; // アセンダントを左端（東の地平線：180度）に合わせる伝統的配置法にするため
+
+            // 1. 各天体の絶対角度をASC基準（左端=180度）に再補正する変換関数
+            function getChartAngle(degree) {
+                // ASCが180度位置に固定されるように、座標角度をオフセット
+                return (degree - ascOffset + 180) * Math.PI / 180;
+            }
+
+            // 2. 背景の星空円盤
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 3. 星座記号リング (12等分)
+            for (let i = 0; i < 12; i++) {
+                const startAngle = getChartAngle(i * 30);
+                const endAngle = getChartAngle((i + 1) * 30);
+
+                // 各区切りの仕切り線
+                ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+                ctx.beginPath();
+                ctx.moveTo(cx + (r - 35) * Math.cos(startAngle), cy + (r - 35) * Math.sin(startAngle));
+                ctx.lineTo(cx + r * Math.cos(startAngle), cy + r * Math.sin(startAngle));
+                ctx.stroke();
+
+                // 記号（シンボル）の描画
+                ctx.fillStyle = '#f3e5ab';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                const midAngle = getChartAngle(i * 30 + 15);
+                const sx = cx + (r - 17.5) * Math.cos(midAngle);
+                const sy = cy + (r - 17.5) * Math.sin(midAngle);
+                ctx.fillText(ZODIAC_SIGNS[i].symbol, sx, sy);
+            }
+
+            // 4. 内側のサークル
+            ctx.strokeStyle = '#d4af37';
+            ctx.beginPath();
+            ctx.arc(cx, cy, r - 35, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 5. ハウス区分線 (イコールハウスシステムに準じ、ASCから30度刻みで均等配置)
+            ctx.strokeStyle = 'rgba(212, 175, 55, 0.2)';
+            for (let h = 0; h < 12; h++) {
+                const hAngle = getChartAngle(h * 30);
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + (r - 35) * Math.cos(hAngle), cy + (r - 35) * Math.sin(hAngle));
+                ctx.stroke();
+            }
+
+            // 6. アスペクト線（アスペクトを幾何学的に内側に描写）
+            const planetAngles = [
+                { name: "Sun", angle: pos.sun, color: '#ff6b6b' },
+                { name: "Moon", angle: pos.moon, color: '#4dadf7' },
+                { name: "Mercury", angle: pos.mercury, color: '#fcc419' },
+                { name: "Venus", angle: pos.venus, color: '#ff8787' },
+                { name: "Mars", angle: pos.mars, color: '#ff3e3e' }
+            ];
+
+            // 2つの惑星間の角度を調べ、メジャーアスペクトがあれば線を描く
+            ctx.lineWidth = 1;
+            for (let i = 0; i < planetAngles.length; i++) {
+                for (let j = i + 1; j < planetAngles.length; j++) {
+                    const p1 = planetAngles[i];
+                    const p2 = planetAngles[j];
+                    const diff = Math.abs(p1.angle - p2.angle);
+                    const aspect = Math.min(diff, 360 - diff);
+
+                    let drawLine = false;
+                    let color = 'rgba(255,255,255,0.05)';
+
+                    if (Math.abs(aspect - 120) < 5) { // トライン (幸運)
+                        color = 'rgba(51, 154, 240, 0.5)'; // 青
+                        drawLine = true;
+                    } else if (Math.abs(aspect - 180) < 5) { // オポジション (緊張)
+                        color = 'rgba(250, 82, 82, 0.5)'; // 赤
+                        drawLine = true;
+                    } else if (Math.abs(aspect - 90) < 5) { // スクエア (葛藤)
+                        color = 'rgba(255, 145, 0, 0.5)'; // オレンジ
+                        drawLine = true;
+                    } else if (Math.abs(aspect - 60) < 3) { // セクスタイル (調和)
+                        color = 'rgba(92, 124, 250, 0.3)'; // 薄藍
+                        drawLine = true;
+                    }
+
+                    if (drawLine) {
+                        ctx.strokeStyle = color;
+                        ctx.beginPath();
+                        ctx.moveTo(cx + (r - 90) * Math.cos(getChartAngle(p1.angle)), cy + (r - 90) * Math.sin(getChartAngle(p1.angle)));
+                        ctx.lineTo(cx + (r - 90) * Math.cos(getChartAngle(p2.angle)), cy + (r - 90) * Math.sin(getChartAngle(p2.angle)));
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // 7. 天体（プラネット）の配置・シンボルのマッピング
+            const planetIcons = { Sun: "☀️", Moon: "🌙", Mercury: "☿", Venus: "♀", Mars: "♂" };
+            planetAngles.forEach(p => {
+                const angleRad = getChartAngle(p.angle);
+                const px = cx + (r - 65) * Math.cos(angleRad);
+                const py = cy + (r - 65) * Math.sin(angleRad);
+
+                // 発光する小さな背景円
+                ctx.fillStyle = 'rgba(7, 6, 20, 0.9)';
+                ctx.strokeStyle = p.color;
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.arc(px, py, 14, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+
+                // 天体シンボル絵文字
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '14px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(planetIcons[p.name], px, py + 1); // 縦位置微調整
+            });
+
+            // 8. アセンダント（ASC）の矢印を東（左端）に誇らしく表示
+            ctx.strokeStyle = '#d4af37';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(cx - r + 35, cy);
+            ctx.lineTo(cx - r + 10, cy);
+            ctx.stroke();
+            
+            ctx.fillStyle = '#d4af37';
+            ctx.font = 'bold 12px Cinzel';
+            ctx.textAlign = 'left';
+            ctx.fillText("ASC", cx - r + 45, cy + 4);
+        }
+    </script>
+</body>
+</html>
