@@ -121,37 +121,6 @@
             outline: none;
         }
 
-        /* 住所検索用の入力レイアウト */
-        .address-search-box {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn-search {
-            background: #1a1738;
-            color: var(--gold);
-            border: 1px solid var(--gold);
-            padding: 0 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-family: var(--font-jp);
-            transition: all 0.3s;
-            white-space: nowrap;
-        }
-
-        .btn-search:hover {
-            background: var(--gold);
-            color: var(--bg-dark);
-            box-shadow: 0 0 10px var(--gold-glow);
-        }
-
-        .coords-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
         .btn-calc {
             width: 100%;
             background: linear-gradient(135deg, #8a6f27, #d4af37);
@@ -312,30 +281,17 @@
                 <input type="date" id="birth-date" value="2000-01-01">
             </div>
             <div class="form-group">
-                <label for="birth-time">出生時刻</label>
+                <label for="birth-time">出生時刻 (正確な時刻を推奨)</label>
                 <input type="time" id="birth-time" value="12:00">
             </div>
-            
-            <!-- 【追加】住所からの緯度経度検索機能 -->
             <div class="form-group">
-                <label for="birth-address">出生場所の住所・市区町村</label>
-                <div class="address-search-box">
-                    <input type="text" id="birth-address" placeholder="例: 東京都新宿区" value="東京都新宿区">
-                    <button type="button" class="btn-search" onclick="searchCoordinates()">座標検索</button>
-                </div>
+                <label for="birth-lng">経度 (東経はプラス、西経はマイナス)</label>
+                <input type="number" id="birth-lng" step="0.0001" value="139.6917" placeholder="例: 東京 139.6917">
             </div>
-
-            <div class="coords-row">
-                <div class="form-group">
-                    <label for="birth-lng">経度 (自動入力可)</label>
-                    <input type="number" id="birth-lng" step="0.0001" value="139.6917">
-                </div>
-                <div class="form-group">
-                    <label for="birth-lat">緯度 (自動入力可)</label>
-                    <input type="number" id="birth-lat" step="0.0001" value="35.6895">
-                </div>
+            <div class="form-group">
+                <label for="birth-lat">緯度 (北緯はプラス、南緯はマイナス)</label>
+                <input type="number" id="birth-lat" step="0.0001" value="35.6895" placeholder="例: 東京 35.6895">
             </div>
-            
             <button class="btn-calc" onclick="generateHoroscope()">運命のチャートを生成</button>
         </div>
 
@@ -385,8 +341,8 @@
             { name: "双子座 (Gemini)", symbol: "♊", start: 60, desc: "驚くべき好奇心と知性、高い情報収集力を持った言葉の魔術師です。多角的な視点を持ち、異なる環境やアイデアを軽やかに行き来する柔軟性があります。" },
             { name: "蟹座 (Cancer)", symbol: "♋", start: 90, desc: "深い愛情と共感力を持ち、大切な人々や自らの居場所を守り育てる守護者です。直感力に優れ、言葉にできない相手の感情を敏感に察知して寄り添うことができます。" },
             { name: "獅子座 (Leo)", symbol: "♌", start: 120, desc: "内なる太陽のごとく、自己を表現し周囲を照らす堂々たるカリスマです。誇り高く、人生を自らの力でドラマチックに創造していくためのクリエイティブなエネルギーに満ちています。" },
-            { name: "乙女座 (Virgo)", symbol: "♍", start: 150, desc: "高い分析力と整理能力を持ち、混沌とした世界に秩序と癒やしをもたらす奉仕者です。細部へのこだわり、優れた洞察力は、周囲の課題をスマートに解決へ導きます。" },
-            { name: "天秤座 (Libra)", symbol: "♎", start: 180, desc: "調和、美、飾らない公正さを重んじる洗練されたバランサーです。他者の美点を見抜く審美眼に優れ、人間関係において知性的かつ平和的な協調関係を築き上げます。" },
+            { name: "座乙女 (Virgo)", symbol: "♍", start: 150, desc: "高い分析力と整理能力を持ち、混沌とした世界に秩序と癒やしをもたらす奉仕者です。細部へのこだわり、優れた洞察力は、周囲の課題をスマートに解決へ導きます。" },
+            { name: "天秤座 (Libra)", symbol: "♎", start: 180, desc: "調和、美、そして公正さを重んじる洗練されたバランサーです。他者の美点を見抜く審美眼に優れ、人間関係において知性的かつ平和的な協調関係を築き上げます。" },
             { name: "蠍座 (Scorpio)", symbol: "♏", start: 210, desc: "底知れぬ意志の強さと深い洞察力を持ち、生と死、変容のテーマを扱う探求者です。物事の本質を鋭く見抜き、一人の人や物事と極限まで深く結びつく絆を求めます。" },
             { name: "射手座 (Sagittarius)", symbol: "♐", start: 240, desc: "真理と自由を求めてどこまでも旅を続ける、永遠の精神的冒険家です。楽観的で大局的な視野を持ち、哲学や高度な学問、異文化に心を開き、知識を吸収し続けます。" },
             { name: "山羊座 (Capricorn)", symbol: "♑", start: 270, desc: "社会的な構造や伝統を重んじ、高い責任感を持って自らの帝国を築き上げる組織者です。長期的な目標に対して一歩一歩確実に登り詰める、圧倒的な自己規律を有します。" },
@@ -394,43 +350,7 @@
             { name: "魚座 (Pisces)", symbol: "♓", start: 330, desc: "あらゆる境界線を溶かし去る、圧倒的な慈愛とスピリチュアルな感性を持つ芸術家です。目に見えない宇宙の集合無意識をすくい上げ、人々に深いカタルシスと癒やしをもたらします。" }
         ];
 
-        // 国土地理院APIを使って住所から緯度経度を取得する非同期関数
-        async function searchCoordinates() {
-            const addressInput = document.getElementById("birth-address").value.trim();
-            if (!addressInput) {
-                alert("出生場所（住所や市区町村名）を入力してください。");
-                return;
-            }
-
-            try {
-                // 国土地理院の住所検索APIをフェッチ
-                const response = await fetch(`https://msearch.gsi.go.jp/address-search/AddressSearch?q=${encodeURIComponent(addressInput)}`);
-                if (!response.ok) {
-                    throw new Error("ネットワーク応答が正常ではありませんでした。");
-                }
-                const data = await response.json();
-
-                if (data && data.length > 0) {
-                    // APIの返却データは [経度, 緯度] の順であるため、順序に注意して抽出
-                    const lng = data[0].geometry.coordinates[0];
-                    const lat = data[0].geometry.coordinates[1];
-                    const resolvedName = data[0].properties.title;
-
-                    // フォームへ値を代入
-                    document.getElementById("birth-lng").value = lng.toFixed(4);
-                    document.getElementById("birth-lat").value = lat.toFixed(4);
-
-                    // 検索候補地をポップアップで利用者に確認させる
-                    alert(`「${resolvedName}」が見つかりました。\n経度: ${lng.toFixed(4)} / 緯度: ${lat.toFixed(4)} をセットしました。`);
-                } else {
-                    alert("該当する住所が見つかりませんでした。より広範な地区名（例: 『京都府 京都市』など）で検索してください。");
-                }
-            } catch (error) {
-                console.error("Geocoding Error:", error);
-                alert("エラー：住所の解析中に問題が発生しました。手動で経度・緯度を入力してください。");
-            }
-        }
-
+        // 12星座のシンボルを素早く引く
         function getZodiacDetails(degree) {
             const normDeg = (degree % 360 + 360) % 360;
             const idx = Math.floor(normDeg / 30);
@@ -440,6 +360,7 @@
             };
         }
 
+        // 初期描画（ダミーホロスコープ）
         window.onload = () => {
             drawEmptyChart();
         };
@@ -449,18 +370,22 @@
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, 500, 500);
             
+            // 星座円盤などのベースを描画
             const cx = 250, cy = 250, r = 220;
             
+            // 外円
             ctx.strokeStyle = '#d4af37';
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.arc(cx, cy, r, 0, Math.PI * 2);
             ctx.stroke();
 
+            // 内円
             ctx.beginPath();
             ctx.arc(cx, cy, r - 35, 0, Math.PI * 2);
             ctx.stroke();
 
+            // 12分割線と星座記号
             for (let i = 0; i < 12; i++) {
                 const angle = (i * 30) * Math.PI / 180;
                 ctx.beginPath();
@@ -468,6 +393,7 @@
                 ctx.lineTo(cx + r * Math.cos(angle), cy + r * Math.sin(angle));
                 ctx.stroke();
 
+                // 記号描画
                 ctx.fillStyle = '#f3e5ab';
                 ctx.font = '18px Arial';
                 ctx.textAlign = 'center';
@@ -478,6 +404,7 @@
                 ctx.fillText(ZODIAC_SIGNS[i].symbol, sx, sy);
             }
 
+            // 中央のグリッド（魔法陣風）
             ctx.strokeStyle = 'rgba(212, 175, 55, 0.15)';
             ctx.beginPath();
             ctx.arc(cx, cy, r - 90, 0, Math.PI * 2);
@@ -488,15 +415,19 @@
             ctx.fillText("ENTER EXALTATION DATA", cx, cy);
         }
 
+        // 精密天文計算部
         function calculatePositions(year, month, day, decimalHour, lng, lat) {
+            // 1. ユリウス日 (Julian Date) の算出
             let y = year, m = month;
             if (m <= 2) { y--; m += 12; }
             const A = Math.floor(y / 100);
             const B = 2 - A + Math.floor(A / 4);
             const JD = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + day + (decimalHour / 24) + B - 1524.5;
             
+            // J2000からのユリウス世紀数 T
             const T = (JD - 2451545.0) / 36525;
 
+            // 2. 太陽の黄経の計算（簡易ケプラー式：精度約0.01度）
             let L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
             let M = 357.52911 + 35999.05029 * T - 0.0001537 * T * T;
             M = (M * Math.PI / 180);
@@ -504,25 +435,31 @@
             let sunLng = (L0 + C) % 360;
             if (sunLng < 0) sunLng += 360;
 
+            // 3. 月の黄経の計算（精度約0.5度）
             let Lp = 218.316 + 481267.881 * T;
             let Mp = (134.963 + 477198.868 * T) * Math.PI / 180;
             let D = (297.850 + 445267.111 * T) * Math.PI / 180;
             let moonLng = (Lp + 6.289 * Math.sin(Mp) + 1.274 * Math.sin(2 * D - Mp) + 0.658 * Math.sin(2 * D)) % 360;
             if (moonLng < 0) moonLng += 360;
 
+            // 4. 水星、金星、火星の簡易位置（グラフィック用に近似値を計算）
             let mercuryLng = (sunLng + 20 + 30 * Math.sin(T * 12)) % 360;
             let venusLng = (sunLng - 15 + 40 * Math.cos(T * 8)) % 360;
             let marsLng = (sunLng + 120 + 150 * T) % 360;
 
+            // 5. 地方恒星時 (LMST) とアセンダント (ASC) の算出
+            // グリーンウィッチ平均恒星時 (GMST)
             const JD0 = Math.floor(JD - 0.5) + 0.5;
             const UT = decimalHour;
             const T0 = (JD0 - 2451545.0) / 36525;
             let gmst = 6.697374558 + 2400.051336 * T0 + 1.0027379093 * UT;
-            gmst = (gmst * 15) % 360; 
-            const lmst = (gmst + lng) % 360; 
+            gmst = (gmst * 15) % 360; // 時間を度に変換
+            const lmst = (gmst + lng) % 360; // 地方恒星時
 
+            // 黄道傾斜角 (Obliquity of Ecliptic)
             const eps = (23.4392911 - 46.8150 * T / 3600) * Math.PI / 180;
             
+            // ASCの算出
             const RAMC = lmst * Math.PI / 180;
             const phi = lat * Math.PI / 180;
             let asc = Math.atan2(-Math.cos(RAMC), Math.sin(RAMC) * Math.cos(eps) + Math.tan(phi) * Math.sin(eps));
@@ -539,6 +476,7 @@
             };
         }
 
+        // 解析実行およびチャート再描画
         function generateHoroscope() {
             const name = document.getElementById("client-name").value;
             const dateStr = document.getElementById("birth-date").value;
@@ -559,8 +497,10 @@
             const timeParts = timeStr.split(":");
             const decimalHour = parseFloat(timeParts[0]) + parseFloat(timeParts[1]) / 60;
 
+            // 星座位置の計算
             const positions = calculatePositions(y, m, d, decimalHour, lng, lat);
 
+            // 鑑定書の更新
             document.getElementById("out-name").innerText = name;
             document.getElementById("out-datetime").innerText = `${y}年${m}月${d}日 ${timeStr}`;
             document.getElementById("out-location").innerText = `東経 ${lng.toFixed(2)}° / 北緯 ${lat.toFixed(2)}°`;
@@ -571,48 +511,60 @@
 
             document.getElementById("out-asc").innerText = `${ascZodiac.name} (${positions.asc.toFixed(1)}°)`;
 
+            // 【1】太陽
             document.getElementById("txt-sun-sign").innerText = sunZodiac.name;
             document.getElementById("txt-sun-desc").innerText = sunZodiac.desc;
 
+            // 【2】月
             document.getElementById("txt-moon-sign").innerText = moonZodiac.name;
             document.getElementById("txt-moon-desc").innerText = moonZodiac.desc;
 
+            // 【3】ASC
             document.getElementById("txt-asc-sign").innerText = ascZodiac.name;
             document.getElementById("txt-asc-desc").innerText = `アセンダント(上昇宮)は「他者があなたを見た時の第一印象」を表します。${ascZodiac.name}にASCを持つあなたは、${ascZodiac.desc.substring(0, 80)}…といった気質を周囲に放っています。`;
 
+            // 表示フェードイン
             document.getElementById("certificate").style.display = "block";
 
+            // ビジュアルホロスコープの動的描画
             renderChart(positions);
         }
 
+        // ホロスコープをCanvasに緻密かつ神秘的に描画する
         function renderChart(pos) {
             const canvas = document.getElementById("horoscopeCanvas");
             const ctx = canvas.getContext("2d");
             ctx.clearRect(0, 0, 500, 500);
 
             const cx = 250, cy = 250, r = 220;
-            const ascOffset = pos.asc; 
+            const ascOffset = pos.asc; // アセンダントを左端（東の地平線：180度）に合わせる伝統的配置法にするため
 
+            // 1. 各天体の絶対角度をASC基準（左端=180度）に再補正する変換関数
             function getChartAngle(degree) {
+                // ASCが180度位置に固定されるように、座標角度をオフセット
                 return (degree - ascOffset + 180) * Math.PI / 180;
             }
 
+            // 2. 背景の星空円盤
             ctx.strokeStyle = '#d4af37';
             ctx.lineWidth = 1.5;
             ctx.beginPath();
             ctx.arc(cx, cy, r, 0, Math.PI * 2);
             ctx.stroke();
 
+            // 3. 星座記号リング (12等分)
             for (let i = 0; i < 12; i++) {
                 const startAngle = getChartAngle(i * 30);
                 const endAngle = getChartAngle((i + 1) * 30);
 
+                // 各区切りの仕切り線
                 ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
                 ctx.beginPath();
                 ctx.moveTo(cx + (r - 35) * Math.cos(startAngle), cy + (r - 35) * Math.sin(startAngle));
                 ctx.lineTo(cx + r * Math.cos(startAngle), cy + r * Math.sin(startAngle));
                 ctx.stroke();
 
+                // 記号（シンボル）の描画
                 ctx.fillStyle = '#f3e5ab';
                 ctx.font = '16px Arial';
                 ctx.textAlign = 'center';
@@ -623,11 +575,13 @@
                 ctx.fillText(ZODIAC_SIGNS[i].symbol, sx, sy);
             }
 
+            // 4. 内側のサークル
             ctx.strokeStyle = '#d4af37';
             ctx.beginPath();
             ctx.arc(cx, cy, r - 35, 0, Math.PI * 2);
             ctx.stroke();
 
+            // 5. ハウス区分線 (イコールハウスシステムに準じ、ASCから30度刻みで均等配置)
             ctx.strokeStyle = 'rgba(212, 175, 55, 0.2)';
             for (let h = 0; h < 12; h++) {
                 const hAngle = getChartAngle(h * 30);
@@ -637,6 +591,7 @@
                 ctx.stroke();
             }
 
+            // 6. アスペクト線（アスペクトを幾何学的に内側に描写）
             const planetAngles = [
                 { name: "Sun", angle: pos.sun, color: '#ff6b6b' },
                 { name: "Moon", angle: pos.moon, color: '#4dadf7' },
@@ -645,6 +600,7 @@
                 { name: "Mars", angle: pos.mars, color: '#ff3e3e' }
             ];
 
+            // 2つの惑星間の角度を調べ、メジャーアスペクトがあれば線を描く
             ctx.lineWidth = 1;
             for (let i = 0; i < planetAngles.length; i++) {
                 for (let j = i + 1; j < planetAngles.length; j++) {
@@ -656,17 +612,17 @@
                     let drawLine = false;
                     let color = 'rgba(255,255,255,0.05)';
 
-                    if (Math.abs(aspect - 120) < 5) { 
-                        color = 'rgba(51, 154, 240, 0.5)'; 
+                    if (Math.abs(aspect - 120) < 5) { // トライン (幸運)
+                        color = 'rgba(51, 154, 240, 0.5)'; // 青
                         drawLine = true;
-                    } else if (Math.abs(aspect - 180) < 5) { 
-                        color = 'rgba(250, 82, 82, 0.5)'; 
+                    } else if (Math.abs(aspect - 180) < 5) { // オポジション (緊張)
+                        color = 'rgba(250, 82, 82, 0.5)'; // 赤
                         drawLine = true;
-                    } else if (Math.abs(aspect - 90) < 5) { 
-                        color = 'rgba(255, 145, 0, 0.5)'; 
+                    } else if (Math.abs(aspect - 90) < 5) { // スクエア (葛藤)
+                        color = 'rgba(255, 145, 0, 0.5)'; // オレンジ
                         drawLine = true;
-                    } else if (Math.abs(aspect - 60) < 3) { 
-                        color = 'rgba(92, 124, 250, 0.3)'; 
+                    } else if (Math.abs(aspect - 60) < 3) { // セクスタイル (調和)
+                        color = 'rgba(92, 124, 250, 0.3)'; // 薄藍
                         drawLine = true;
                     }
 
@@ -680,12 +636,14 @@
                 }
             }
 
+            // 7. 天体（プラネット）の配置・シンボルのマッピング
             const planetIcons = { Sun: "☀️", Moon: "🌙", Mercury: "☿", Venus: "♀", Mars: "♂" };
             planetAngles.forEach(p => {
                 const angleRad = getChartAngle(p.angle);
                 const px = cx + (r - 65) * Math.cos(angleRad);
                 const py = cy + (r - 65) * Math.sin(angleRad);
 
+                // 発光する小さな背景円
                 ctx.fillStyle = 'rgba(7, 6, 20, 0.9)';
                 ctx.strokeStyle = p.color;
                 ctx.lineWidth = 1.5;
@@ -694,13 +652,15 @@
                 ctx.fill();
                 ctx.stroke();
 
+                // 天体シンボル絵文字
                 ctx.fillStyle = '#ffffff';
                 ctx.font = '14px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(planetIcons[p.name], px, py + 1); 
+                ctx.fillText(planetIcons[p.name], px, py + 1); // 縦位置微調整
             });
 
+            // 8. アセンダント（ASC）の矢印を東（左端）に誇らしく表示
             ctx.strokeStyle = '#d4af37';
             ctx.lineWidth = 3;
             ctx.beginPath();
